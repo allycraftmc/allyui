@@ -85,11 +85,27 @@ public class DemoMenu extends InvMenu {
 
     static class PreferenceMenu extends InvMenu {
         public PreferenceMenu(@NotNull Player player) {
-            super(player, InventoryType.CHEST_2_ROW, Component.text("Preferences", NamedTextColor.GREEN));
+            super(player, InventoryType.CHEST_6_ROW, Component.text("Preferences", NamedTextColor.GREEN));
 
             this.add(ButtonPosition.rowCenter(0), new ButtonItemStatic(this, ItemStack.builder(Material.OAK_HANGING_SIGN)
                     .customName(Component.text("This is a preference menu", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false))
                     .build()));
+
+            this.fill(
+                    ButtonArea.rect(
+                            ButtonPosition.next(ButtonPosition.firstOfRow(1)),
+                            ButtonPosition.previous(ButtonPosition.lastOfRow(2))
+                    ),
+                    new ButtonItemStatic(this, ItemStack.of(Material.DIRT))
+            );
+
+            this.fill(
+                    ButtonArea.rect(
+                            ButtonPosition.offset(ButtonPosition.firstOfRow(4), 2),
+                            ButtonPosition.offset(ButtonPosition.lastOfRow(5), -2)
+                    ),
+                    (i, count) -> new ButtonItemStatic(this, ItemStack.of(Material.DIAMOND).withAmount(i + 1))
+            );
 
             this.add(ButtonPosition.last(), new ButtonMenuBack(this, InvMenu.DEFAULT_BACK_ITEM));
         }

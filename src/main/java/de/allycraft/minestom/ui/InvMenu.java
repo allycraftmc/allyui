@@ -1,6 +1,7 @@
 package de.allycraft.minestom.ui;
 
 import de.allycraft.minestom.ui.button.Button;
+import de.allycraft.minestom.ui.button.ButtonArea;
 import de.allycraft.minestom.ui.button.ButtonItemStatic;
 import de.allycraft.minestom.ui.button.ButtonPosition;
 import net.kyori.adventure.text.Component;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public abstract class InvMenu extends Menu {
@@ -73,6 +75,25 @@ public abstract class InvMenu extends Menu {
 
     protected final void add(int row, int column, Function<InvMenu, Button> buttonConstructor) {
         this.add(ButtonPosition.of(row, column), buttonConstructor);
+    }
+
+    protected final void fill(ButtonArea buttonArea, Button button) {
+        for(int slot : buttonArea.getButtonPositions(this.getWidth(), this.getHeight())) {
+            this.add(slot, button);
+        }
+    }
+
+    protected final void fill(ButtonArea buttonArea, Function<InvMenu, Button> buttonConstructor) {
+        this.fill(buttonArea, buttonConstructor.apply(this));
+    }
+
+    protected final void fill(ButtonArea buttonArea, BiFunction<Integer, Integer, Button> buttonConstructor) {
+        int i = 0;
+        List<Integer> slots = buttonArea.getButtonPositions(this.getWidth(), this.getHeight());
+        for(int slot : slots) {
+            this.add(slot, buttonConstructor.apply(i, slots.size()));
+            i++;
+        }
     }
 
     private @NotNull Button getButtonAt(int slot) {

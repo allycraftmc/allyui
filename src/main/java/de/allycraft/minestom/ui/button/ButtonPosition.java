@@ -27,7 +27,19 @@ public interface ButtonPosition {
         return (width, height) -> pos.getSlot(width, height) + offset;
     }
 
-    static ButtonPosition rowLast(int row) {
+    static ButtonPosition previous(ButtonPosition pos) {
+        return ButtonPosition.offset(pos, -1);
+    }
+
+    static ButtonPosition next(ButtonPosition pos) {
+        return ButtonPosition.offset(pos, 1);
+    }
+
+    static ButtonPosition firstOfRow(int row) {
+        return (width, height) -> row * width;
+    }
+
+    static ButtonPosition lastOfRow(int row) {
         return (width, height) -> (row + 1) * width - 1;
     }
 
