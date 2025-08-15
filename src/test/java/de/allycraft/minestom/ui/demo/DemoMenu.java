@@ -2,6 +2,7 @@ package de.allycraft.minestom.ui.demo;
 
 import de.allycraft.minestom.ui.AnvilMenu;
 import de.allycraft.minestom.ui.InvMenu;
+import de.allycraft.minestom.ui.PagedMenu;
 import de.allycraft.minestom.ui.button.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -13,24 +14,26 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 
 public class DemoMenu extends InvMenu {
     public DemoMenu(@NotNull Player player) {
         super(player, InventoryType.CHEST_4_ROW, Component.text("Demo Menu"));
 
-        this.add(ButtonPosition.offset(ButtonPosition.rowCenter(0), -1), new ButtonItemStatic(this, ItemStack.builder(Material.ITEM_FRAME)
+        this.add(ButtonPosition.offset(ButtonPosition.centerOfRow(0), -1), new ButtonItemStatic(this, ItemStack.builder(Material.ITEM_FRAME)
                 .customName(Component.text("TODO", NamedTextColor.RED).decoration(TextDecoration.ITALIC, false))
                 .build()));
-        this.add(ButtonPosition.offset(ButtonPosition.rowCenter(0), 1), new  ButtonItemStatic(this, ItemStack.of(Material.AIR)));
-        this.add(ButtonPosition.offset(ButtonPosition.rowCenter(1), -2), CounterButton::new);
-        this.add(ButtonPosition.rowCenter(1), new ButtonItemDynamic(this, () ->
+        this.add(ButtonPosition.offset(ButtonPosition.centerOfRow(0), 1), new  ButtonItemStatic(this, ItemStack.of(Material.AIR)));
+        this.add(ButtonPosition.offset(ButtonPosition.centerOfRow(1), -2), CounterButton::new);
+        this.add(ButtonPosition.centerOfRow(1), new ButtonItemDynamic(this, () ->
                 ItemStack.builder(Material.OAK_HANGING_SIGN)
                         .customName(Component.text("Time").decoration(TextDecoration.ITALIC, false))
                         .lore(Component.text("Millis: " + System.currentTimeMillis()).decoration(TextDecoration.ITALIC, false))
                         .build()
         ));
-        this.add(ButtonPosition.offset(ButtonPosition.rowCenter(1), 2), new ButtonMenuOpen(this, PreferenceMenu::new, ItemStack.builder(Material.COMPARATOR)
+        this.add(ButtonPosition.offset(ButtonPosition.centerOfRow(1), 2), new ButtonMenuOpen(this, PreferenceMenu::new, ItemStack.builder(Material.COMPARATOR)
                 .customName(Component.text("Preferences", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false))
                 .build()));
 
@@ -39,19 +42,19 @@ public class DemoMenu extends InvMenu {
             this.player.sendMessage(Component.text("Name must be at least 3 characters long", NamedTextColor.RED));
             return false;
         };
-        this.add(ButtonPosition.offset(ButtonPosition.rowCenter(2), -1), new ButtonMenuOpen(this, () -> new AnvilMenu(
+        this.add(ButtonPosition.offset(ButtonPosition.centerOfRow(2), -1), new ButtonMenuOpen(this, () -> new AnvilMenu(
                 this.player,
                 Component.text("Enter name:"),
                 nameValidator,
                 name -> this.getPlayer().sendMessage(Component.text("Name: " + name))
         ), ItemStack.of(Material.ANVIL)));
 
-        this.add(ButtonPosition.offset(ButtonPosition.rowCenter(2), 1), new ButtonItemStatic(this, ItemStack.builder(Material.CHERRY_HANGING_SIGN)
+        this.add(ButtonPosition.offset(ButtonPosition.centerOfRow(2), 1), new ButtonItemStatic(this, ItemStack.builder(Material.CHERRY_HANGING_SIGN)
                 .customName(Component.text("TODO", NamedTextColor.RED).decoration(TextDecoration.ITALIC, false))
                 .build()));
 
-        this.add(ButtonPosition.rowCenter(3), new ButtonItemStatic(this, ItemStack.builder(Material.BOOKSHELF)
-                .customName(Component.text("TODO", NamedTextColor.RED).decoration(TextDecoration.ITALIC, false))
+        this.add(ButtonPosition.centerOfRow(3), new ButtonMenuOpen(this, LibraryMenu::new, ItemStack.builder(Material.BOOKSHELF)
+                .customName(Component.text("Library", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false))
                 .build()));
 
         this.add(ButtonPosition.last(), new ButtonMenuClose(this, InvMenu.DEFAULT_CLOSE_ITEM));
@@ -87,7 +90,7 @@ public class DemoMenu extends InvMenu {
         public PreferenceMenu(@NotNull Player player) {
             super(player, InventoryType.CHEST_6_ROW, Component.text("Preferences", NamedTextColor.GREEN));
 
-            this.add(ButtonPosition.rowCenter(0), new ButtonItemStatic(this, ItemStack.builder(Material.OAK_HANGING_SIGN)
+            this.add(ButtonPosition.centerOfRow(0), new ButtonItemStatic(this, ItemStack.builder(Material.OAK_HANGING_SIGN)
                     .customName(Component.text("This is a preference menu", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false))
                     .build()));
 
@@ -107,6 +110,28 @@ public class DemoMenu extends InvMenu {
                     (i, count) -> new ButtonItemStatic(this, ItemStack.of(Material.DIAMOND).withAmount(i + 1))
             );
 
+            this.add(ButtonPosition.last(), new ButtonMenuBack(this, InvMenu.DEFAULT_BACK_ITEM));
+        }
+    }
+
+    static class LibraryMenu extends PagedMenu {
+        public LibraryMenu(@NotNull Player player) {
+            super(player, InventoryType.CHEST_3_ROW, Component.text("Library"), ButtonArea.rect(
+                    ButtonPosition.next(ButtonPosition.firstOfRow(0)),
+                    ButtonPosition.previous(ButtonPosition.lastOfRow(1))
+            ));
+
+            List<Button> bookButtons = new ArrayList<>();
+            for(int i = 0; i < 50; i++) {
+                bookButtons.add(new ButtonItemStatic(this, ItemStack.builder(Material.BOOK)
+                        .customName(Component.text("Book " + i + 1).decoration(TextDecoration.ITALIC, false))
+                        .glowing(i % 3 == 0)
+                        .build()));
+            }
+            this.setButtons(bookButtons);
+
+            this.add(ButtonPosition.previous(ButtonPosition.centerOfRow(2)), this.createPreviousPageButton());
+            this.add(ButtonPosition.next(ButtonPosition.centerOfRow(2)), this.createNextPageButton());
             this.add(ButtonPosition.last(), new ButtonMenuBack(this, InvMenu.DEFAULT_BACK_ITEM));
         }
     }

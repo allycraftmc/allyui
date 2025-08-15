@@ -15,7 +15,7 @@ public interface ButtonPosition {
         return (width, height) -> (height / 2) * width + (width / 2);
     }
 
-    static ButtonPosition rowCenter(int row) {
+    static ButtonPosition centerOfRow(int row) {
         return (width, height) -> row * width + (width / 2);
     }
 

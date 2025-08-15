@@ -106,7 +106,7 @@ public abstract class InvMenu extends Menu {
         return this.getButtonAt(slot).getItem();
     }
 
-    public final void render() {
+    public void render() {
         boolean changed = false;
         for(int slot = 0; slot < this.inventory.getSize(); slot++) {
             ItemStack item = this.getItemAt(slot);
@@ -143,7 +143,7 @@ public abstract class InvMenu extends Menu {
         event.setCancelled(cancel);
     }
 
-    private boolean isOpen() {
+    protected boolean isOpen() {
         return this.inventory.equals(this.player.getOpenInventory());
     }
 
@@ -194,5 +194,13 @@ public abstract class InvMenu extends Menu {
             case CHEST_6_ROW -> 6;
             default -> 1;
         };
+    }
+
+    public Button getFiller() {
+        return this.filler;
+    }
+
+    public ItemStack getFillerItem() {
+        return this.filler.getItem();
     }
 }
