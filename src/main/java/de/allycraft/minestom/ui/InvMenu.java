@@ -17,6 +17,8 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.item.component.TooltipDisplay;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +28,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public abstract class InvMenu extends Menu {
+    private static final Logger LOGGER = LoggerFactory.getLogger(InvMenu.class);
     public static final ItemStack DEFAULT_FILLER_ITEM = ItemStack.builder(Material.GRAY_STAINED_GLASS_PANE)
             .customModelData(List.of(), List.of(), List.of("empty_slot"), List.of())
             .set(DataComponents.TOOLTIP_DISPLAY, new TooltipDisplay(true, Set.of()))
@@ -54,7 +57,11 @@ public abstract class InvMenu extends Menu {
     }
 
     protected final void add(ButtonPosition position, Button button) {
-        this.buttons.put(position.getSlot(this.getWidth(), this.getHeight()), button);
+        int slot = position.getSlot(this.getWidth(), this.getHeight());
+        if(slot < 0 || slot >= this.getSize()) {
+            LOGGER.warn("Added button to invalid slot {} into a menu of size {}", slot, this.getSize());
+        }
+        this.buttons.put(slot, button);
     }
 
     protected final void add(ButtonPosition position, Function<InvMenu, Button> buttonConstructor) {
