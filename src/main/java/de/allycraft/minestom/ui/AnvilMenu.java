@@ -10,6 +10,7 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -18,24 +19,35 @@ public class AnvilMenu extends Menu {
     private @NotNull String input = "";
     private final Predicate<String> validator;
     private final Consumer<String> callback;
+    private final boolean cancelable;
 
-    public AnvilMenu(@NotNull Player player, Component title, Predicate<String> validator, Consumer<String> callback) {
+    public AnvilMenu(@NotNull Player player, Component title, Predicate<String> validator, Consumer<String> callback, boolean cancelable) {
         super(player);
         this.anvil = new AnvilInventory(title);
         this.anvil.setTag(Menu.MENU_TAG, this);
         this.validator = validator;
         this.callback = callback;
+        this.cancelable = cancelable;
 
+       List<String> customModeData = cancelable ? List.of("anvil_menu_cancelable") : List.of("anvil_menu");
         this.anvil.setItemStack(
                 0,
                 ItemStack.builder(Material.NAME_TAG)
                         .customName(Component.empty())
+                        .customModelData(List.of(), List.of(), customModeData, List.of())
                         .build()
         );
     }
 
     protected void onInventoryPreClickEvent(InventoryPreClickEvent event) {
-        if(event.getSlot() == 2) {
+        if(this.cancelable && event.getSlot() == 0) {
+            this.input = "";
+            if(this.getParent() != null) {
+                this.getParent().open();
+            } else {
+                this.close();
+            }
+        } else if(event.getSlot() == 2) {
             if(this.validator.test(this.input)) {
                 this.callback.accept(this.input);
 

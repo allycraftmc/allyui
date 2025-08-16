@@ -46,7 +46,8 @@ public class DemoMenu extends InvMenu {
                 this.player,
                 Component.text("Enter name:"),
                 nameValidator,
-                name -> this.getPlayer().sendMessage(Component.text("Name: " + name))
+                name -> this.getPlayer().sendMessage(Component.text("Name: " + name)),
+                true
         ), ItemStack.of(Material.ANVIL)));
 
         this.add(ButtonPosition.offset(ButtonPosition.centerOfRow(2), 1), new ButtonItemStatic(this, ItemStack.builder(Material.CHERRY_HANGING_SIGN)
@@ -124,7 +125,7 @@ public class DemoMenu extends InvMenu {
             List<Button> bookButtons = new ArrayList<>();
             for(int i = 0; i < 50; i++) {
                 bookButtons.add(new ButtonItemStatic(this, ItemStack.builder(Material.BOOK)
-                        .customName(Component.text("Book " + i + 1).decoration(TextDecoration.ITALIC, false))
+                        .customName(Component.text("Book " + (i + 1)).decoration(TextDecoration.ITALIC, false))
                         .glowing(i % 3 == 0)
                         .build()));
             }
