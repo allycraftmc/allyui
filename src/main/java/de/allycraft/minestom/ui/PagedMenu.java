@@ -2,6 +2,7 @@ package de.allycraft.minestom.ui;
 
 import de.allycraft.minestom.ui.button.Button;
 import de.allycraft.minestom.ui.button.ButtonArea;
+import de.allycraft.minestom.ui.button.ButtonItemDynamic;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -23,6 +24,10 @@ public class PagedMenu extends InvMenu {
     public static final ItemStack DEFAULT_NEXT_PAGE_ITEM = ItemStack.builder(Material.ARROW)
             .customName(Component.text("Next Page", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false))
             .customModelData(List.of(), List.of(), List.of("button_next_page"), List.of())
+            .build();
+
+    public static final ItemStack DEFAULT_CURRENT_PAGE_ITEM_BASE = ItemStack.builder(Material.BOOK)
+            .customModelData(List.of(), List.of(), List.of("button_current_page"), List.of())
             .build();
 
     private final List<Integer> pageSlots;
@@ -71,6 +76,10 @@ public class PagedMenu extends InvMenu {
         return currentPage;
     }
 
+    public int getPageCount() {
+        return pageCount;
+    }
+
     public boolean isFirstPage() {
         return this.currentPage == 0;
     }
@@ -92,6 +101,13 @@ public class PagedMenu extends InvMenu {
                 PagedMenu.this.changePage(PagedMenu.this.currentPage - 1);
             }
         };
+    }
+
+    public Button createCurrentPageButton() {
+        return new ButtonItemDynamic(() -> PagedMenu.DEFAULT_CURRENT_PAGE_ITEM_BASE.withCustomName(
+                Component.text("Page " + (this.getCurrentPage() + 1) + " / " + this.getPageCount(), NamedTextColor.GREEN)
+                        .decoration(TextDecoration.ITALIC, false)
+        ));
     }
 
     public Button createNextPageButton() {

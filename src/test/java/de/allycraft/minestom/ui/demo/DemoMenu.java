@@ -128,6 +128,7 @@ public class DemoMenu extends InvMenu {
             this.setButtons(bookButtons);
 
             this.add(ButtonPosition.previous(ButtonPosition.centerOfRow(2)), this.createPreviousPageButton());
+            this.add(ButtonPosition.centerOfRow(2), this.createCurrentPageButton());
             this.add(ButtonPosition.next(ButtonPosition.centerOfRow(2)), this.createNextPageButton());
             this.add(ButtonPosition.last(), new ButtonMenuBack(InvMenu.DEFAULT_BACK_ITEM));
         }

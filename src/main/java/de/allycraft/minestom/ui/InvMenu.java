@@ -61,16 +61,15 @@ public abstract class InvMenu extends Menu {
         this.filler = new ButtonItemStatic(this.fillerItem);
     }
 
-    protected final void add(ButtonPosition position, Button button) {
-        int slot = position.getSlot(this.getWidth(), this.getHeight());
+    protected final void add(int slot, Button button) {
         if(slot < 0 || slot >= this.getSize()) {
             LOGGER.warn("Added button to invalid slot {} into a menu of size {}", slot, this.getSize());
         }
         this.buttons.put(slot, button);
     }
 
-    protected final void add(int slot, Button button) {
-        this.add(ButtonPosition.of(slot), button);
+    protected final void add(ButtonPosition position, Button button) {
+        this.add(position.getSlot(this.getWidth(), this.getHeight()), button);
     }
 
     protected final void add(int row, int column, Button button) {
