@@ -5,21 +5,20 @@ import net.minestom.server.inventory.click.Click;
 import net.minestom.server.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class ButtonMenuClose extends Button {
+public class ButtonMenuClose implements Button {
     private final @NotNull ItemStack item;
 
-    public ButtonMenuClose(@NotNull InvMenu menu, @NotNull ItemStack item) {
-        super(menu);
+    public ButtonMenuClose(@NotNull ItemStack item) {
         this.item = item;
     }
 
     @Override
-    public @NotNull ItemStack getItem() {
+    public @NotNull ItemStack getItem(InvMenu menu) {
         return this.item;
     }
 
     @Override
-    public void onClick(Click click) {
-        this.menu.close();
+    public void onClick(InvMenu menu, Click click) {
+        menu.close();
     }
 }

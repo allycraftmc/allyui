@@ -80,30 +80,30 @@ public class PagedMenu extends InvMenu {
     }
 
     public Button createPreviousPageButton() {
-        return new Button(this) {
+        return new Button() {
             @Override
-            public @NotNull ItemStack getItem() {
-                if(PagedMenu.this.isFirstPage()) return this.menu.getFillerItem();
+            public @NotNull ItemStack getItem(InvMenu menu) {
+                if(PagedMenu.this.isFirstPage()) return menu.getFillerItem();
                 return PagedMenu.DEFAULT_PREVIOUS_PAGE_ITEM;
             }
 
             @Override
-            public void onClick(Click click) {
+            public void onClick(InvMenu menu, Click click) {
                 PagedMenu.this.changePage(PagedMenu.this.currentPage - 1);
             }
         };
     }
 
     public Button createNextPageButton() {
-        return new Button(this) {
+        return new Button() {
             @Override
-            public @NotNull ItemStack getItem() {
-                if(PagedMenu.this.isLastPage()) return this.menu.getFillerItem();
+            public @NotNull ItemStack getItem(InvMenu menu) {
+                if(PagedMenu.this.isLastPage()) return menu.getFillerItem();
                 return PagedMenu.DEFAULT_NEXT_PAGE_ITEM;
             }
 
             @Override
-            public void onClick(Click click) {
+            public void onClick(InvMenu menu, Click click) {
                 PagedMenu.this.changePage(PagedMenu.this.currentPage + 1);
             }
         };

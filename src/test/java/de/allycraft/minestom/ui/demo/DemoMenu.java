@@ -22,18 +22,18 @@ public class DemoMenu extends InvMenu {
     public DemoMenu(@NotNull Player player) {
         super(player, InventoryType.CHEST_4_ROW, Component.text("Demo Menu"));
 
-        this.add(ButtonPosition.offset(ButtonPosition.centerOfRow(0), -1), new ButtonItemStatic(this, ItemStack.builder(Material.ITEM_FRAME)
+        this.add(ButtonPosition.offset(ButtonPosition.centerOfRow(0), -1), new ButtonItemStatic(ItemStack.builder(Material.ITEM_FRAME)
                 .customName(Component.text("TODO", NamedTextColor.RED).decoration(TextDecoration.ITALIC, false))
                 .build()));
-        this.add(ButtonPosition.offset(ButtonPosition.centerOfRow(0), 1), new  ButtonItemStatic(this, ItemStack.of(Material.AIR)));
-        this.add(ButtonPosition.offset(ButtonPosition.centerOfRow(1), -2), CounterButton::new);
-        this.add(ButtonPosition.centerOfRow(1), new ButtonItemDynamic(this, () ->
+        this.add(ButtonPosition.offset(ButtonPosition.centerOfRow(0), 1), new  ButtonItemStatic(ItemStack.of(Material.AIR)));
+        this.add(ButtonPosition.offset(ButtonPosition.centerOfRow(1), -2), new CounterButton());
+        this.add(ButtonPosition.centerOfRow(1), new ButtonItemDynamic(() ->
                 ItemStack.builder(Material.OAK_HANGING_SIGN)
                         .customName(Component.text("Time").decoration(TextDecoration.ITALIC, false))
                         .lore(Component.text("Millis: " + System.currentTimeMillis()).decoration(TextDecoration.ITALIC, false))
                         .build()
         ));
-        this.add(ButtonPosition.offset(ButtonPosition.centerOfRow(1), 2), new ButtonMenuOpen(this, PreferenceMenu::new, ItemStack.builder(Material.COMPARATOR)
+        this.add(ButtonPosition.offset(ButtonPosition.centerOfRow(1), 2), new ButtonMenuOpen(PreferenceMenu::new, ItemStack.builder(Material.COMPARATOR)
                 .customName(Component.text("Preferences", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false))
                 .build()));
 
@@ -42,7 +42,7 @@ public class DemoMenu extends InvMenu {
             this.player.sendMessage(Component.text("Name must be at least 3 characters long", NamedTextColor.RED));
             return false;
         };
-        this.add(ButtonPosition.offset(ButtonPosition.centerOfRow(2), -1), new ButtonMenuOpen(this, () -> new AnvilMenu(
+        this.add(ButtonPosition.offset(ButtonPosition.centerOfRow(2), -1), new ButtonMenuOpen(() -> new AnvilMenu(
                 this.player,
                 Component.text("Enter name:"),
                 nameValidator,
@@ -50,26 +50,22 @@ public class DemoMenu extends InvMenu {
                 true
         ), ItemStack.of(Material.ANVIL)));
 
-        this.add(ButtonPosition.offset(ButtonPosition.centerOfRow(2), 1), new ButtonItemStatic(this, ItemStack.builder(Material.CHERRY_HANGING_SIGN)
+        this.add(ButtonPosition.offset(ButtonPosition.centerOfRow(2), 1), new ButtonItemStatic(ItemStack.builder(Material.CHERRY_HANGING_SIGN)
                 .customName(Component.text("TODO", NamedTextColor.RED).decoration(TextDecoration.ITALIC, false))
                 .build()));
 
-        this.add(ButtonPosition.centerOfRow(3), new ButtonMenuOpen(this, LibraryMenu::new, ItemStack.builder(Material.BOOKSHELF)
+        this.add(ButtonPosition.centerOfRow(3), new ButtonMenuOpen(LibraryMenu::new, ItemStack.builder(Material.BOOKSHELF)
                 .customName(Component.text("Library", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false))
                 .build()));
 
-        this.add(ButtonPosition.last(), new ButtonMenuClose(this, InvMenu.DEFAULT_CLOSE_ITEM));
+        this.add(ButtonPosition.last(), new ButtonMenuClose(InvMenu.DEFAULT_CLOSE_ITEM));
     }
 
-    static class CounterButton extends Button {
+    static class CounterButton implements Button {
         private int count = 0;
 
-        protected CounterButton(InvMenu menu) {
-            super(menu);
-        }
-
         @Override
-        public @NotNull ItemStack getItem() {
+        public @NotNull ItemStack getItem(InvMenu menu) {
             return ItemStack.builder(Material.COMMAND_BLOCK)
                     .customName(Component.text("Click Me", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false))
                     .lore(Component.text("Count: ").append(Component.text(this.count)).decoration(TextDecoration.ITALIC, false))
@@ -77,13 +73,13 @@ public class DemoMenu extends InvMenu {
         }
 
         @Override
-        public void onClick(Click click) {
+        public void onClick(InvMenu menu, Click click) {
             if(click instanceof Click.Left) {
                 this.count++;
             } else if(click instanceof Click.Right) {
                 this.count--;
             }
-            this.menu.render();
+            menu.render();
         }
     }
 
@@ -91,7 +87,7 @@ public class DemoMenu extends InvMenu {
         public PreferenceMenu(@NotNull Player player) {
             super(player, InventoryType.CHEST_6_ROW, Component.text("Preferences", NamedTextColor.GREEN));
 
-            this.add(ButtonPosition.centerOfRow(0), new ButtonItemStatic(this, ItemStack.builder(Material.OAK_HANGING_SIGN)
+            this.add(ButtonPosition.centerOfRow(0), new ButtonItemStatic(ItemStack.builder(Material.OAK_HANGING_SIGN)
                     .customName(Component.text("This is a preference menu", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false))
                     .build()));
 
@@ -100,7 +96,7 @@ public class DemoMenu extends InvMenu {
                             ButtonPosition.next(ButtonPosition.firstOfRow(1)),
                             ButtonPosition.previous(ButtonPosition.lastOfRow(2))
                     ),
-                    new ButtonItemStatic(this, ItemStack.of(Material.DIRT))
+                    new ButtonItemStatic(ItemStack.of(Material.DIRT))
             );
 
             this.fill(
@@ -108,10 +104,10 @@ public class DemoMenu extends InvMenu {
                             ButtonPosition.offset(ButtonPosition.firstOfRow(4), 2),
                             ButtonPosition.offset(ButtonPosition.lastOfRow(5), -2)
                     ),
-                    (i, count) -> new ButtonItemStatic(this, ItemStack.of(Material.DIAMOND).withAmount(i + 1))
+                    (i, count) -> new ButtonItemStatic(ItemStack.of(Material.DIAMOND).withAmount(i + 1))
             );
 
-            this.add(ButtonPosition.last(), new ButtonMenuBack(this, InvMenu.DEFAULT_BACK_ITEM));
+            this.add(ButtonPosition.last(), new ButtonMenuBack(InvMenu.DEFAULT_BACK_ITEM));
         }
     }
 
@@ -124,7 +120,7 @@ public class DemoMenu extends InvMenu {
 
             List<Button> bookButtons = new ArrayList<>();
             for(int i = 0; i < 50; i++) {
-                bookButtons.add(new ButtonItemStatic(this, ItemStack.builder(Material.BOOK)
+                bookButtons.add(new ButtonItemStatic(ItemStack.builder(Material.BOOK)
                         .customName(Component.text("Book " + (i + 1)).decoration(TextDecoration.ITALIC, false))
                         .glowing(i % 3 == 0)
                         .build()));
@@ -133,7 +129,7 @@ public class DemoMenu extends InvMenu {
 
             this.add(ButtonPosition.previous(ButtonPosition.centerOfRow(2)), this.createPreviousPageButton());
             this.add(ButtonPosition.next(ButtonPosition.centerOfRow(2)), this.createNextPageButton());
-            this.add(ButtonPosition.last(), new ButtonMenuBack(this, InvMenu.DEFAULT_BACK_ITEM));
+            this.add(ButtonPosition.last(), new ButtonMenuBack(InvMenu.DEFAULT_BACK_ITEM));
         }
     }
 }

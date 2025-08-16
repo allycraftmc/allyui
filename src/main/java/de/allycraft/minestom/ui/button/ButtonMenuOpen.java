@@ -10,29 +10,28 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class ButtonMenuOpen extends Button {
+public class ButtonMenuOpen implements Button {
     private final @NotNull Function<Player, Menu> menuSupplier;
     private final @NotNull ItemStack item;
 
-    public ButtonMenuOpen(@NotNull InvMenu menu, @NotNull Function<Player, Menu> menuSupplier, @NotNull ItemStack item) {
-        super(menu);
+    public ButtonMenuOpen(@NotNull Function<Player, Menu> menuSupplier, @NotNull ItemStack item) {
         this.menuSupplier = menuSupplier;
         this.item = item;
     }
 
-    public ButtonMenuOpen(@NotNull InvMenu menu, @NotNull Supplier<Menu> menuSupplier, @NotNull ItemStack item) {
-        this(menu, player -> menuSupplier.get(), item);
+    public ButtonMenuOpen(@NotNull Supplier<Menu> menuSupplier, @NotNull ItemStack item) {
+        this(player -> menuSupplier.get(), item);
     }
 
     @Override
-    public @NotNull ItemStack getItem() {
+    public @NotNull ItemStack getItem(InvMenu menu) {
         return this.item;
     }
 
     @Override
-    public void onClick(Click click) {
-        Menu newMenu = this.menuSupplier.apply(this.menu.getPlayer());
-        newMenu.setParent(this.menu);
+    public void onClick(InvMenu menu, Click click) {
+        Menu newMenu = this.menuSupplier.apply(menu.getPlayer());
+        newMenu.setParent(menu);
         newMenu.open();
     }
 }

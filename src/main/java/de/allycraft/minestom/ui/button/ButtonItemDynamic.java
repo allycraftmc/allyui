@@ -7,21 +7,20 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
-public class ButtonItemDynamic extends Button {
+public class ButtonItemDynamic implements Button {
     private final Supplier<ItemStack> itemSupplier;
 
-    public ButtonItemDynamic(@NotNull InvMenu menu, Supplier<ItemStack> itemSupplier) {
-        super(menu);
+    public ButtonItemDynamic(Supplier<ItemStack> itemSupplier) {
         this.itemSupplier = itemSupplier;
     }
 
     @Override
-    public @NotNull ItemStack getItem() {
+    public @NotNull ItemStack getItem(InvMenu menu) {
         return this.itemSupplier.get();
     }
 
     @Override
-    public void onClick(Click click) {
-        this.menu.render();
+    public void onClick(InvMenu menu, Click click) {
+        menu.render();
     }
 }

@@ -5,16 +5,10 @@ import net.minestom.server.inventory.click.Click;
 import net.minestom.server.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class Button {
-    protected final @NotNull InvMenu menu;
+public interface Button {
+    @NotNull ItemStack getItem(InvMenu menu);
 
-    public Button(@NotNull InvMenu menu) {
-        this.menu = menu;
-    }
+    default void onClick(InvMenu menu, Click click) {
 
-    public abstract @NotNull ItemStack getItem();
-
-    public void onClick(Click click) {
-
-    }
+    };
 }

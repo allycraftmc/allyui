@@ -1,7 +1,9 @@
 package de.allycraft.minestom.ui.demo;
 
 import de.allycraft.minestom.ui.AllyUIMinestom;
+import de.allycraft.minestom.ui.AnvilMenu;
 import de.allycraft.minestom.ui.InvMenu;
+import de.allycraft.minestom.ui.PagedMenu;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.MinecraftServer;
@@ -35,6 +37,8 @@ public class DemoServer {
             player.getInventory().addItemStack(InvMenu.DEFAULT_FILLER_ITEM);
             player.getInventory().addItemStack(InvMenu.DEFAULT_CLOSE_ITEM);
             player.getInventory().addItemStack(InvMenu.DEFAULT_BACK_ITEM);
+            player.getInventory().addItemStack(PagedMenu.DEFAULT_PREVIOUS_PAGE_ITEM);
+            player.getInventory().addItemStack(PagedMenu.DEFAULT_NEXT_PAGE_ITEM);
         });
 
         AllyUIMinestom.register(MinecraftServer.getGlobalEventHandler());

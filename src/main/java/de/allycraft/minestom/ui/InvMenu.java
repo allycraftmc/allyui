@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public abstract class InvMenu extends Menu {
     private static final Logger LOGGER = LoggerFactory.getLogger(InvMenu.class);
@@ -46,14 +45,20 @@ public abstract class InvMenu extends Menu {
 
     private final Inventory inventory;
     private final Map<Integer, Button> buttons;
+    private final ItemStack fillerItem;
     private final Button filler;
 
-    public InvMenu(@NotNull Player player, InventoryType inventoryType, Component title) {
+    public InvMenu(@NotNull Player player, @NotNull InventoryType inventoryType, @NotNull Component title) {
+        this(player, inventoryType, title, InvMenu.DEFAULT_FILLER_ITEM);
+    }
+
+    public InvMenu(@NotNull Player player, @NotNull InventoryType inventoryType, @NotNull Component title, @NotNull ItemStack fillerItem) {
         super(player);
         this.inventory = new Inventory(inventoryType, title);
         this.inventory.setTag(Menu.MENU_TAG, this);
         this.buttons = new HashMap<>();
-        this.filler = new ButtonItemStatic(this, DEFAULT_FILLER_ITEM);
+        this.fillerItem = fillerItem;
+        this.filler = new ButtonItemStatic(this.fillerItem);
     }
 
     protected final void add(ButtonPosition position, Button button) {
@@ -64,34 +69,18 @@ public abstract class InvMenu extends Menu {
         this.buttons.put(slot, button);
     }
 
-    protected final void add(ButtonPosition position, Function<InvMenu, Button> buttonConstructor) {
-        this.add(position, buttonConstructor.apply(this));
-    }
-
     protected final void add(int slot, Button button) {
         this.add(ButtonPosition.of(slot), button);
-    }
-
-    protected final void add(int slot, Function<InvMenu, Button> buttonConstructor) {
-        this.add(ButtonPosition.of(slot), buttonConstructor);
     }
 
     protected final void add(int row, int column, Button button) {
         this.add(ButtonPosition.of(row, column), button);
     }
 
-    protected final void add(int row, int column, Function<InvMenu, Button> buttonConstructor) {
-        this.add(ButtonPosition.of(row, column), buttonConstructor);
-    }
-
     protected final void fill(ButtonArea buttonArea, Button button) {
         for(int slot : buttonArea.getButtonPositions(this.getWidth(), this.getHeight())) {
             this.add(slot, button);
         }
-    }
-
-    protected final void fill(ButtonArea buttonArea, Function<InvMenu, Button> buttonConstructor) {
-        this.fill(buttonArea, buttonConstructor.apply(this));
     }
 
     protected final void fill(ButtonArea buttonArea, BiFunction<Integer, Integer, Button> buttonConstructor) {
@@ -110,7 +99,7 @@ public abstract class InvMenu extends Menu {
     }
 
     private @NotNull ItemStack getItemAt(int slot) {
-        return this.getButtonAt(slot).getItem();
+        return this.getButtonAt(slot).getItem(this);
     }
 
     public void render() {
@@ -132,7 +121,7 @@ public abstract class InvMenu extends Menu {
         int slot = event.getSlot();
         if(slot >= 0 && slot < this.getSize()) {
             Button button = this.getButtonAt(slot);
-            button.onClick(event.getClick());
+            button.onClick(this, event.getClick());
         }
         event.setCancelled(true);
     }
@@ -208,6 +197,6 @@ public abstract class InvMenu extends Menu {
     }
 
     public ItemStack getFillerItem() {
-        return this.filler.getItem();
+        return this.fillerItem;
     }
 }

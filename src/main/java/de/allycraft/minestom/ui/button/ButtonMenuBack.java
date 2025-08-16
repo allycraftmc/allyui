@@ -5,23 +5,22 @@ import net.minestom.server.inventory.click.Click;
 import net.minestom.server.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class ButtonMenuBack extends Button {
+public class ButtonMenuBack implements Button {
     private final ItemStack item;
 
-    public ButtonMenuBack(@NotNull InvMenu menu, ItemStack item) {
-        super(menu);
+    public ButtonMenuBack(ItemStack item) {
         this.item = item;
     }
 
     @Override
-    public @NotNull ItemStack getItem() {
+    public @NotNull ItemStack getItem(InvMenu menu) {
         return this.item;
     }
 
     @Override
-    public void onClick(Click click) {
-        if(this.menu.getParent() != null) {
-            this.menu.getParent().open();
+    public void onClick(InvMenu menu, Click click) {
+        if(menu.getParent() != null) {
+            menu.getParent().open();
         }
     }
 }
